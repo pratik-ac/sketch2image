@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Contact Us</h2>
+
+    <h3 class="text-center">Team Members</h3>
+    <div class="team-container">
+        {% for member in team %}
+        <div class="team-box">
+            <h4>{{ member.name }}</h4>
+            <p><strong>Role:</strong> {{ member.role }}</p>
+            <a href="{{ member.github }}" target="_blank">
+                <img src="{{ url_for('static', filename='images/github_logo.png') }}" alt="GitHub" width="20">
+                GitHub Profile
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="discord-section">
+        <h3>Join Our Discord</h3>
+        <p>Be a part of our growing community and stay updated!</p>
+        <a href="https://discord.gg/Ahe7XzT2" target="_blank" class="discord-link">
+            <img src="{{ url_for('static', filename='images/discord_logo.png') }}" alt="Discord" width="30">
+            Join Here
+        </a>
+    </div>
+</div>
+
+<style>
+    .team-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .team-box {
+        padding: 15px;
+        border-radius: 8px;
+        background: #f0f8ff;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s;
+    }
+
+    .team-box:hover {
+        transform: scale(1.05);
+    }
+
+    .discord-section {
+        text-align: center;
+        margin-top: 50px;
+        padding: 20px;
+        background: #7289DA;
+        border-radius: 8px;
+        color: white;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .discord-link {
+        display: inline-block;
+        padding: 10px 15px;
+        background: white;
+        color: #7289DA;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-top: 10px;
+        transition: 0.3s;
+    }
+
+    .discord-link:hover {
+        background: #5865F2;
+        color: white;
+    }
+
+    a {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

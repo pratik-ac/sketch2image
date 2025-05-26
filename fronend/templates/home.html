@@ -1,0 +1,120 @@
+{% extends "base.html" %} {% block title %}Upload & Generate{% endblock %} {% block content %}
+<div class="container text-center">
+  <h2 class="text-primary fw-bold">Sketch => Image</h2>
+  <p class="lead text-muted">
+    Upload your sketch and let our AI transform it into a stunning image!
+  </p>
+
+  <div class="card shadow-lg mt-4 p-4" style="border-radius: 15px">
+    <div class="card-body">
+      <!-- Upload Section with Drag & Drop -->
+      <div class="upload-box text-center p-4 mb-3" id="uploadBox">
+        <input type="file" id="fileInput" accept="image/*" hidden />
+        <label for="fileInput" class="d-flex flex-column align-items-center">
+          <i class="fas fa-cloud-upload-alt fa-3x text-primary"></i>
+          <p class="mt-2 text-muted" id="uploadText">
+            Drag & Drop or Click to Upload
+          </p>
+        </label>
+      </div>
+
+      <!-- Image Previews -->
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <h5 class="text-muted">Original Sketch</h5>
+          <div class="image-preview border rounded shadow-sm p-2">
+            <img id="originalImage" class="img-fluid" style="display: none; max-height: 250px" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h5 class="text-muted">Generated Image</h5>
+          <div class="image-preview border rounded shadow-sm p-2">
+            <img id="generatedImage" class="img-fluid" style="display: none; max-height: 250px" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Button -->
+      <div class="d-grid gap-2 d-md-flex justify-content-center mt-4">
+        <button class="btn btn-primary btn-lg" onclick="uploadImage()">
+          Upload & Generate
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .upload-box {
+    border: 2px dashed #007bff;
+    border-radius: 10px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .upload-box:hover {
+    background: #e3f2fd;
+    border-color: #0056b3;
+  }
+
+  .upload-box p {
+    font-size: 16px;
+    font-weight: 500;
+    color: #495057;
+  }
+
+  .image-preview {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+  }
+</style>
+
+<script>
+  document.getElementById('fileInput').addEventListener('change', function (event) {
+    let file = event.target.files[0];
+    if (file) {
+      document.getElementById('uploadText').innerText = 'Selected: ' + file.name;
+
+      let reader = new FileReader();
+      reader.onload = function (e) {
+        let originalImage = document.getElementById('originalImage');
+        originalImage.src = e.target.result;
+        originalImage.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  async function uploadImage() {
+    let input = document.getElementById('fileInput').files[0];
+    if (!input) {
+      alert('Please select an image.');
+      return;
+    }
+
+    let formData = new FormData();
+    formData.append('file', input);
+    formData.append('model', 'C'); // Always use N model
+
+    let response = await fetch("{{ url_for('upload_sketch') }}", {
+      method: 'POST',
+      body: formData,
+    });
+
+    let data = await response.json();
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
+
+    let generatedImage = document.getElementById('generatedImage');
+    generatedImage.src = 'data:image/png;base64,' + data.prediction;
+    generatedImage.style.display = 'block';
+  }
+</script>
+
+{% endblock %}
